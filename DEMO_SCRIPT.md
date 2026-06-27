@@ -1,0 +1,72 @@
+# AgentRecruit — 90-Second Demo Script
+
+Record against the deployed URL once live. Use the seeded demo accounts
+(`candidate@demo.com` / `recruiter@demo.com`, password `demo123`) so the
+recruiter chat has real accumulated context to answer from.
+
+Pre-verified questions that get clean, well-cited answers (use these, not
+improvised ones — agent retrieval over `experience/` files is occasionally
+inconsistent on contributor-chosen test phrasing):
+- "What is her experience with PyTorch?"
+- "What is her strongest project?"
+- "What did she do at DataWorks?"
+
+---
+
+**0:00–0:10 — The hook (landing page)**
+> "The average job posting gets 250 applications. Recruiters spend six
+> seconds on each one. AgentRecruit gives every candidate a persistent AI
+> agent that carries their real work history into every recruiter
+> conversation — so nobody gets six seconds, and nobody repeats themselves."
+
+Show the landing page hero and scroll past the 4-step section.
+
+**0:10–0:25 — Candidate side**
+Log in as `candidate@demo.com`. Show the dashboard: "Your agent is active
+on 1 role," with the live activity log of recruiter actions already on it.
+> "Sarah set up her profile once — work history, skills, goals. That's
+> accumulated into a real Aicoo workspace, not stored as a PDF."
+
+**0:25–0:45 — Recruiter side: the agent answers**
+Log in as `recruiter@demo.com`. Open the inbox — point out the "Strong
+match" badge, computed from skill/experience overlap against the job
+requirements. Open the application, ask the agent one of the pre-verified
+questions above.
+> "I'm not talking to a chatbot with generic knowledge — I'm talking to an
+> agent grounded in Sarah's actual accumulated notes."
+When the answer streams in, pause on the green citation badge under it.
+> "And it tells me exactly which file it pulled that from. No hallucination,
+> no guessing."
+
+**0:45–0:55 — Decision routing**
+Click "Move to Interview."
+> "That decision routes straight back into her workspace."
+
+**0:55–1:05 — Close the loop**
+Switch back to the candidate dashboard (or refresh), show the new event in
+the activity log.
+> "Sarah sees it land in real time — no email, no waiting."
+
+**1:05–1:20 — The architecture beat**
+Briefly show the landing page's "Architecture note" section.
+> "Every API call here is real and live against Aicoo — init, accumulate,
+> share/create, chat. The one shortcut we took, and disclosed openly, is
+> using a single Aicoo account across simulated users instead of true
+> multi-tenant provisioning — that's the one thing that changes first on
+> the way to production."
+
+**1:20–1:30 — Close**
+> "AgentRecruit: recruiting that doesn't start from zero, every time."
+
+---
+
+## Recording notes
+
+- Clear `localStorage` before recording (`localStorage.clear()` in devtools)
+  so the candidate dashboard/chat history don't show stale test data.
+- Keep both logins (candidate + recruiter) in separate browser profiles or
+  incognito windows so you can flip between them without re-logging-in on
+  camera.
+- The agent's first streamed response can take 8–15 seconds. Either trim
+  that wait in editing, or ask the question slightly before you need the
+  answer on screen.

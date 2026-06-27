@@ -1,6 +1,10 @@
 # AgentRecruit
 
-Every job candidate gets a persistent AI agent that handles recruiter introductions, answers questions from their real profile context, and routes hiring decisions back to them — powered by [Aicoo](https://www.aicoo.io)'s coordination API.
+The average job posting gets 250 applications. Recruiters spend about 6 seconds on each one. Nobody on either side gets real signal.
+
+AgentRecruit gives every candidate a persistent AI agent that carries their actual work history into every recruiter conversation. Recruiters chat with that agent directly — and every answer is cited back to the exact file it came from, so it's never a generic LLM guess. A decision routes straight back to the candidate's dashboard. No resume PDFs, no cold inboxes, no repeating yourself.
+
+It's built on [Aicoo](https://www.aicoo.io)'s coordination API — every `/init`, `/accumulate`, `/share/create`, and `/chat` call below is real, live, and unmocked.
 
 ## What it does
 
