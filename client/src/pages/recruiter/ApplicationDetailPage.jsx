@@ -235,27 +235,30 @@ function DecisionPanel({ applicationId, candidateName, decided, decidedStatus })
       {error && <p className="text-sm text-stamp-dark">{error}</p>}
       <div className="space-y-2 pt-1">
         <button
-          disabled={isDecided}
+          disabled={isDecided || decisionMutation.isPending}
           onClick={() => decisionMutation.mutate('interview')}
           className="stamp-press w-full border-[1.5px] border-seal text-seal rounded-sm py-2 text-sm font-display font-semibold disabled:opacity-40 hover:bg-seal-soft transition-colors"
         >
-          Move to Interview
+          {decisionMutation.isPending ? 'Recording…' : 'Move to Interview'}
         </button>
         <button
-          disabled={isDecided}
+          disabled={isDecided || decisionMutation.isPending}
           onClick={() => decisionMutation.mutate('hold')}
           className="stamp-press w-full border-[1.5px] border-ink-soft text-ink-soft rounded-sm py-2 text-sm font-display font-semibold disabled:opacity-40 hover:bg-ink/5 transition-colors"
         >
-          Hold
+          {decisionMutation.isPending ? 'Recording…' : 'Hold'}
         </button>
         <button
-          disabled={isDecided}
+          disabled={isDecided || decisionMutation.isPending}
           onClick={() => decisionMutation.mutate('declined')}
           className="stamp-press w-full border-[1.5px] border-stamp text-stamp-dark rounded-sm py-2 text-sm font-display font-semibold disabled:opacity-40 hover:bg-stamp-soft transition-colors"
         >
-          Not Moving Forward
+          {decisionMutation.isPending ? 'Recording…' : 'Not Moving Forward'}
         </button>
       </div>
+      {decisionMutation.isPending && (
+        <p className="eyebrow text-ink-soft">Asking the candidate's agent to write a debrief…</p>
+      )}
       {isDecided && !confirmation && <StampBadge tone="muted">Decided — {decidedStatus}</StampBadge>}
     </div>
   );
