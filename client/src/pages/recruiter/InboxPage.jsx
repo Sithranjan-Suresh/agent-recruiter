@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import Layout from '../../components/Layout';
+import { CardSkeleton } from '../../components/Skeleton';
 
 export default function InboxPage() {
   const { data: inbox, isLoading } = useQuery({
@@ -12,7 +13,7 @@ export default function InboxPage() {
   return (
     <Layout>
       <h1 className="text-2xl font-semibold text-slate-900 mb-6">Inbox</h1>
-      {isLoading && <p className="text-slate-500">Loading...</p>}
+      {isLoading && <CardSkeleton />}
       <div className="space-y-3">
         {inbox?.map((item) => (
           <Link

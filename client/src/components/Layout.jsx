@@ -12,7 +12,12 @@ export default function Layout({ children }) {
         </Link>
         <nav className="flex items-center gap-4 text-sm text-slate-600">
           <Link to="/jobs">Jobs</Link>
-          {user?.role === 'candidate' && <Link to="/candidate/dashboard">Dashboard</Link>}
+          {user?.role === 'candidate' && (
+            <>
+              <Link to="/candidate/dashboard">Dashboard</Link>
+              <Link to="/candidate/profile">Profile</Link>
+            </>
+          )}
           {user?.role === 'recruiter' && (
             <>
               <Link to="/recruiter/inbox">Inbox</Link>

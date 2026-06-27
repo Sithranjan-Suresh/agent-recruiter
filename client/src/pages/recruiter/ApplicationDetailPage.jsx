@@ -63,6 +63,16 @@ function AgentChatPanel({ applicationId }) {
         body: JSON.stringify({ message: userMessage.text, conversationId: conversationIdRef.current }),
       });
 
+      if (res.status === 404 || res.status === 410) {
+        throw new Error('EXPIRED');
+      }
+      if (res.status === 429) {
+        throw new Error('RATE_LIMITED');
+      }
+      if (!res.ok) {
+        throw new Error('FAILED');
+      }
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
@@ -93,10 +103,17 @@ function AgentChatPanel({ applicationId }) {
           }
         }
       }
-    } catch {
+    } catch (err) {
+      const errorText =
+        err.message === 'EXPIRED'
+          ? 'This link has expired.'
+          : err.message === 'RATE_LIMITED'
+          ? 'Agent is busy — try again in a moment.'
+          : 'Agent is busy — try again in a moment.';
       setMessages((prev) => {
         const updated = [...prev];
-        updated[updated.length - 1] = { role: 'agent', text: 'Agent is busy — try again in a moment.' };
+        updated[updated.length - 1] = { role: 'agent', text: errorText };
+        saveHistory(applicationId, updated);
         return updated;
       });
     } finally {
@@ -124,7 +141,7 @@ function AgentChatPanel({ applicationId }) {
           placeholder="Ask the candidate's agent a question..."
           className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm"
         />
-        <button disabled={streaming} className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50">
+        <button disabled={streaming} className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50 transition-colors">
           Send
         </button>
       </form>
@@ -136,11 +153,17 @@ function DecisionPanel({ applicationId, candidateName, decided, decidedStatus })
   const queryClient = useQueryClient();
   const [confirmation, setConfirmation] = useState('');
 
+  const [error, setError] = useState('');
+
   const decisionMutation = useMutation({
     mutationFn: (decision) => api.post(`/applications/${applicationId}/decision`, { decision }),
     onSuccess: () => {
+      setError('');
       setConfirmation(`Decision recorded. ${candidateName} notified.`);
       queryClient.invalidateQueries({ queryKey: ['recruiter-inbox'] });
+    },
+    onError: (err) => {
+      setError(err.response?.data?.error?.message || 'Could not record decision. Try again.');
     },
   });
 
@@ -152,25 +175,26 @@ function DecisionPanel({ applicationId, candidateName, decided, decidedStatus })
         <h2 className="font-semibold text-slate-900">{candidateName}</h2>
       </div>
       {confirmation && <p className="text-sm text-green-600">{confirmation}</p>}
+      {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="space-y-2">
         <button
           disabled={isDecided}
           onClick={() => decisionMutation.mutate('interview')}
-          className="w-full bg-green-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50"
+          className="w-full bg-green-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
         >
           Move to Interview
         </button>
         <button
           disabled={isDecided}
           onClick={() => decisionMutation.mutate('hold')}
-          className="w-full bg-yellow-500 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50"
+          className="w-full bg-yellow-500 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
         >
           Hold
         </button>
         <button
           disabled={isDecided}
           onClick={() => decisionMutation.mutate('declined')}
-          className="w-full bg-slate-400 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50"
+          className="w-full bg-slate-400 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
         >
           Not Moving Forward
         </button>

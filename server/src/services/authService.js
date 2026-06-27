@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import { db } from '../db/db.js';
 import { encrypt } from '../utils/encrypt.js';
-import { initWorkspace } from './aicooService.js';
+import { initWorkspace, accumulateContext } from './aicooService.js';
+import { formatCompanyOverview } from '../utils/markdown.js';
 
 function signToken(user) {
   return jwt.sign({ id: user.id, role: user.role, name: user.name }, process.env.JWT_SECRET, {
@@ -32,7 +33,17 @@ export async function signup({ email, password, role, name, company }) {
      VALUES (?, ?, ?, ?, ?, ?, ?, 0)`
   ).run(id, email, passwordHash, role, name, company || null, encrypt(apiKey));
 
-  const user = { id, role, name, aicooInitialized: false };
+  if (role === 'recruiter') {
+    await accumulateContext(apiKey, [
+      {
+        path: `Recruiters/${id}/Company/overview.md`,
+        content: formatCompanyOverview({ name, company, title: 'Recruiter', teamDescription: '' }),
+      },
+    ]);
+    db.prepare('UPDATE users SET aicoo_initialized = 1 WHERE id = ?').run(id);
+  }
+
+  const user = { id, role, name, aicooInitialized: role === 'recruiter' };
   return { token: signToken(user), user };
 }
 

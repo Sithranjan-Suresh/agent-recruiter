@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import Layout from '../../components/Layout';
+import { CardSkeleton } from '../../components/Skeleton';
 
 const STATUS_LABEL = {
   agent_intro_sent: 'Agent intro sent',
@@ -34,10 +35,10 @@ export default function DashboardPage() {
       {applications?.length > 0 && (
         <p className="text-sm text-slate-500 mb-6">Your agent is active on {applications.length} role{applications.length === 1 ? '' : 's'}.</p>
       )}
-      {isLoading && <p className="text-slate-500">Loading...</p>}
+      {isLoading && <CardSkeleton />}
       <div className="space-y-4">
         {applications?.map((app) => (
-          <div key={app.id} className="bg-white rounded-xl shadow-sm p-5">
+          <div key={app.id} className="bg-white rounded-xl shadow-sm p-5 transition-shadow hover:shadow-md">
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="font-semibold text-slate-900">{app.job.title}</h2>

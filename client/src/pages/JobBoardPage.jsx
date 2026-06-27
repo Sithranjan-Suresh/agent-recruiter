@@ -3,20 +3,28 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
+import { CardSkeleton } from '../components/Skeleton';
 
 function ApplyButton({ jobId }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [toast, setToast] = useState('');
+  const [rateLimited, setRateLimited] = useState(false);
 
   const applyMutation = useMutation({
     mutationFn: () => api.post('/applications', { jobId }),
     onSuccess: () => {
+      setRateLimited(false);
       setToast('Your agent introduced itself to the recruiter');
       queryClient.invalidateQueries({ queryKey: ['candidate-applications'] });
     },
     onError: (err) => {
-      setToast(err.response?.data?.error?.message || 'Something went wrong');
+      if (err.response?.status === 429) {
+        setRateLimited(true);
+        setToast('Agent is busy — try again in a moment');
+      } else {
+        setToast(err.response?.data?.error?.message || 'Something went wrong');
+      }
     },
   });
 
@@ -30,12 +38,17 @@ function ApplyButton({ jobId }) {
         onClick={() => applyMutation.mutate()}
         disabled={profileIncomplete || applyMutation.isPending || applyMutation.isSuccess}
         title={profileIncomplete ? 'Complete your profile first' : undefined}
-        className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50"
+        className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50 transition-colors hover:bg-indigo-700"
       >
         {applyMutation.isPending ? 'Setting up your agent...' : applyMutation.isSuccess ? 'Agent active' : 'Apply via Agent'}
       </button>
       {profileIncomplete && <p className="text-xs text-slate-400 mt-1">Complete your profile first</p>}
       {toast && <p className="text-xs text-slate-500 mt-1">{toast}</p>}
+      {rateLimited && (
+        <button onClick={() => applyMutation.mutate()} className="text-xs text-indigo-600 underline mt-1">
+          Retry
+        </button>
+      )}
     </div>
   );
 }
@@ -49,10 +62,10 @@ export default function JobBoardPage() {
   return (
     <Layout>
       <h1 className="text-2xl font-semibold text-slate-900 mb-6">Open roles</h1>
-      {isLoading && <p className="text-slate-500">Loading jobs...</p>}
+      {isLoading && <CardSkeleton />}
       <div className="grid gap-4">
         {jobs?.map((job) => (
-          <div key={job.id} className="bg-white rounded-xl shadow-sm p-5 flex justify-between items-start">
+          <div key={job.id} className="bg-white rounded-xl shadow-sm p-5 flex justify-between items-start transition-shadow hover:shadow-md">
             <div>
               <h2 className="font-semibold text-slate-900">{job.title}</h2>
               <p className="text-sm text-slate-500">{job.recruiter.company} · {job.location}</p>
