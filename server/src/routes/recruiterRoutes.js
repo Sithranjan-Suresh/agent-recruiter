@@ -4,6 +4,7 @@ import { db } from '../db/db.js';
 import { decrypt } from '../utils/encrypt.js';
 import { chatWithAgent, accumulateContext } from '../services/aicooService.js';
 import { formatCompanyOverview } from '../utils/markdown.js';
+import { computeMatch } from '../utils/matchScore.js';
 import { authRequired } from '../middleware/authMiddleware.js';
 
 const router = Router();
@@ -30,7 +31,8 @@ router.get('/inbox', authRequired('recruiter'), (req, res, next) => {
     const rows = db
       .prepare(
         `SELECT a.id as applicationId, a.status, a.created_at as createdAt, a.agent_url as agentUrl,
-                c.name as candidateName, j.title as jobTitle
+                c.name as candidateName, c.years_exp as candidateYearsExp, c.skills as candidateSkills,
+                j.title as jobTitle, j.requirements as jobRequirements
          FROM applications a
          JOIN jobs j ON j.id = a.job_id
          JOIN users c ON c.id = a.candidate_id
@@ -46,6 +48,11 @@ router.get('/inbox', authRequired('recruiter'), (req, res, next) => {
         status: r.status,
         agentUrl: r.agentUrl,
         createdAt: r.createdAt,
+        match: computeMatch({
+          candidateSkills: r.candidateSkills,
+          candidateYearsExp: r.candidateYearsExp,
+          requirementsText: r.jobRequirements,
+        }),
       }))
     );
   } catch (err) {

@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
   company TEXT,
   aicoo_api_key TEXT NOT NULL,
   aicoo_initialized INTEGER NOT NULL DEFAULT 0,
+  years_exp INTEGER,
+  skills TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

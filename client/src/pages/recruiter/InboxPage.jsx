@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import Layout from '../../components/Layout';
 import { CardSkeleton } from '../../components/Skeleton';
+import StampBadge from '../../components/StampBadge';
 
 export default function InboxPage() {
   const { data: inbox, isLoading } = useQuery({
@@ -29,7 +30,10 @@ export default function InboxPage() {
                   {item.candidate.name} <span className="text-line">→</span> {item.job.title}
                 </span>
               </div>
-              <span className="eyebrow">{new Date(item.createdAt).toLocaleDateString()}</span>
+              <div className="flex items-center gap-3">
+                {item.match && <StampBadge tone={item.match.tone}>{item.match.label}</StampBadge>}
+                <span className="eyebrow">{new Date(item.createdAt).toLocaleDateString()}</span>
+              </div>
             </div>
           </Link>
         ))}

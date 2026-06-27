@@ -28,6 +28,18 @@ function cleanAgentText(text) {
     .trim();
 }
 
+const NOISE_FOLDERS = new Set(['self', 'logs', 'general', 'links']);
+
+function extractSources(event) {
+  if (event.type !== 'tool-call-complete' || !event.success) return [];
+  const results = event.result?.results;
+  if (!Array.isArray(results)) return [];
+  return results
+    .filter((r) => r.folder && !NOISE_FOLDERS.has(r.folder.toLowerCase()) && r.title !== 'MEMORY.md' && r.title !== 'PRIMARY.md')
+    .map((r) => `${r.folder}/${r.title}`)
+    .slice(0, 3);
+}
+
 function AgentChatPanel({ applicationId }) {
   const [messages, setMessages] = useState(() => loadHistory(applicationId));
   const [input, setInput] = useState('');
@@ -48,7 +60,7 @@ function AgentChatPanel({ applicationId }) {
     if (!input.trim() || streaming) return;
 
     const userMessage = { role: 'recruiter', text: input };
-    const nextMessages = [...messages, userMessage, { role: 'agent', text: '' }];
+    const nextMessages = [...messages, userMessage, { role: 'agent', text: '', sources: [] }];
     setMessages(nextMessages);
     saveHistory(applicationId, nextMessages);
     setInput('');
@@ -78,6 +90,7 @@ function AgentChatPanel({ applicationId }) {
       const decoder = new TextDecoder();
       let buffer = '';
       let agentText = '';
+      let sources = [];
 
       while (true) {
         const { done, value } = await reader.read();
@@ -90,11 +103,17 @@ function AgentChatPanel({ applicationId }) {
           try {
             const event = JSON.parse(line);
             if (event.conversationId) conversationIdRef.current = event.conversationId;
+            const newSources = extractSources(event);
+            if (newSources.length) {
+              sources = [...new Set([...sources, ...newSources])];
+            }
             if (event.type === 'text-delta') {
               agentText += event.textDelta;
+            }
+            if (event.type === 'text-delta' || newSources.length) {
               setMessages((prev) => {
                 const updated = [...prev];
-                updated[updated.length - 1] = { role: 'agent', text: agentText };
+                updated[updated.length - 1] = { role: 'agent', text: agentText, sources };
                 saveHistory(applicationId, updated);
                 return updated;
               });
@@ -142,6 +161,9 @@ function AgentChatPanel({ applicationId }) {
               >
                 {displayText || (streaming && i === messages.length - 1 ? <span className="animate-pulse font-mono">···</span> : '')}
               </div>
+              {!isRecruiter && m.sources?.length > 0 && (
+                <p className="eyebrow text-ink-soft/70 mt-1">Answered from: {m.sources.join(', ')}</p>
+              )}
             </div>
           );
         })}
@@ -234,14 +256,17 @@ export default function ApplicationDetailPage() {
   return (
     <Layout>
       <p className="eyebrow mb-1">{current ? current.job.title : 'Application'}</p>
-      <h1 className="text-3xl font-display font-semibold text-ink mb-8">
-        {current ? current.candidate.name : 'Loading…'}
-      </h1>
-      <div className="grid grid-cols-5 gap-6">
-        <div className="col-span-3">
+      <div className="flex items-center gap-3 mb-8">
+        <h1 className="text-3xl font-display font-semibold text-ink">
+          {current ? current.candidate.name : 'Loading…'}
+        </h1>
+        {current?.match && <StampBadge tone={current.match.tone}>{current.match.label}</StampBadge>}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <div className="md:col-span-3 order-1">
           <AgentChatPanel applicationId={id} />
         </div>
-        <div className="col-span-2">
+        <div className="md:col-span-2 order-2">
           <DecisionPanel
             applicationId={id}
             candidateName={current?.candidate.name || 'Candidate'}

@@ -32,7 +32,11 @@ router.post('/profile', authRequired('candidate'), async (req, res, next) => {
 
     await accumulateContext(apiKey, files);
 
-    db.prepare('UPDATE users SET aicoo_initialized = 1 WHERE id = ?').run(user.id);
+    db.prepare('UPDATE users SET aicoo_initialized = 1, years_exp = ?, skills = ? WHERE id = ?').run(
+      yearsExp,
+      skills.join(','),
+      user.id
+    );
 
     res.json({ success: true });
   } catch (err) {

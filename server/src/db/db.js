@@ -19,3 +19,11 @@ const applicationColumns = db.prepare("PRAGMA table_info(applications)").all().m
 if (!applicationColumns.includes('revoked')) {
   db.exec('ALTER TABLE applications ADD COLUMN revoked INTEGER NOT NULL DEFAULT 0');
 }
+
+const userColumns = db.prepare("PRAGMA table_info(users)").all().map((c) => c.name);
+if (!userColumns.includes('years_exp')) {
+  db.exec('ALTER TABLE users ADD COLUMN years_exp INTEGER');
+}
+if (!userColumns.includes('skills')) {
+  db.exec('ALTER TABLE users ADD COLUMN skills TEXT');
+}

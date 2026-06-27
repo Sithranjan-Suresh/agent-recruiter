@@ -7,7 +7,7 @@ function Tab({ to, children }) {
   return (
     <Link
       to={to}
-      className={`eyebrow px-3 py-2 rounded-t-md border border-b-0 transition-colors ${
+      className={`eyebrow whitespace-nowrap px-2 sm:px-3 py-2 rounded-t-md border border-b-0 transition-colors ${
         active
           ? 'bg-paper-card border-line text-ink relative top-px'
           : 'border-transparent text-ink-soft hover:text-ink'
@@ -23,12 +23,12 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen">
-      <header className="px-6 pt-4">
-        <div className="max-w-5xl mx-auto flex items-end justify-between">
-          <Link to="/jobs" className="font-display text-lg font-semibold text-ink pb-2 pr-4">
+      <header className="px-4 sm:px-6 pt-4">
+        <div className="max-w-5xl mx-auto flex items-end justify-between gap-3">
+          <Link to="/jobs" className="font-display text-lg font-semibold text-ink pb-2 shrink-0">
             AgentRecruit<span className="text-stamp">.</span>
           </Link>
-          <nav className="flex items-end gap-1">
+          <nav className="flex items-end gap-1 overflow-x-auto">
             <Tab to="/jobs">Jobs</Tab>
             {user?.role === 'candidate' && (
               <>
@@ -43,7 +43,7 @@ export default function Layout({ children }) {
               </>
             )}
             {user ? (
-              <button onClick={logout} className="eyebrow px-3 py-2 text-ink-soft hover:text-stamp transition-colors">
+              <button onClick={logout} className="eyebrow whitespace-nowrap px-2 sm:px-3 py-2 text-ink-soft hover:text-stamp transition-colors shrink-0">
                 Log out
               </button>
             ) : (
@@ -53,7 +53,7 @@ export default function Layout({ children }) {
         </div>
         <div className="max-w-5xl mx-auto border-b border-line" />
       </header>
-      <main className="max-w-5xl mx-auto px-6 py-10">{children}</main>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10">{children}</main>
     </div>
   );
 }
