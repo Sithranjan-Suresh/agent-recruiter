@@ -86,11 +86,13 @@ export default function LandingPage() {
             <p className="eyebrow mb-2">Architecture note — read before you ask</p>
             <h3 className="font-display font-semibold text-ink mb-2">Why every demo account shares one Aicoo key</h3>
             <p className="text-sm text-ink-soft max-w-2xl">
-              In production, every candidate and recruiter would provision their own Aicoo account, and each agent would
-              be genuinely isolated by account boundary. For this build, every simulated user shares one real Aicoo API
-              key, and we simulate separate workspaces with folder namespacing (<code className="font-mono text-xs">Candidates/{`{id}`}/...</code>).
-              That's a deliberate hackathon shortcut documented in <code className="font-mono text-xs">engineering_spec.md</code> —
-              not a hidden limitation — and it's the one thing that would change first on the path to a real multi-tenant product.
+              Aicoo currently issues one API key per developer account from its dashboard — there's no programmatic
+              endpoint to provision a new account or key per end user. So instead of pretending otherwise, every
+              simulated user in this build shares one real Aicoo key, and we isolate workspaces ourselves with folder
+              namespacing (<code className="font-mono text-xs">Candidates/{`{id}`}/...</code>) at the application layer.
+              It's a real engineering response to a real platform constraint, documented in{' '}
+              <code className="font-mono text-xs">engineering_spec.md</code> — the moment Aicoo exposes per-tenant
+              provisioning, this is a one-file change, not a rearchitecture.
             </p>
           </div>
         </section>

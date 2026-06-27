@@ -19,7 +19,7 @@ Every Aicoo call (`/init`, `/accumulate`, `/share/create`, `/chat`) is real — 
 
 - `server/` — Node.js/Express API, SQLite (via `better-sqlite3`), JWT auth. All Aicoo calls are centralized in `src/services/aicooService.js`.
 - `client/` — React (Vite) + Tailwind CSS + React Router + React Query.
-- One shared Aicoo API key is used for all app users; the app simulates per-user workspaces via folder namespacing (`Candidates/{id}/...`, `Recruiters/{id}/...`) — see `engineering_spec.md` for why.
+- Aicoo issues one API key per developer account from its dashboard, with no programmatic endpoint to provision new accounts/keys per end user. Given that real constraint, this app uses one shared Aicoo key for all simulated users and isolates workspaces at the application layer via folder namespacing (`Candidates/{id}/...`, `Recruiters/{id}/...`) — see `engineering_spec.md` for the full reasoning. The moment Aicoo exposes per-tenant provisioning, this becomes a one-file change, not a rearchitecture.
 
 ## Aicoo endpoints used
 
