@@ -162,7 +162,17 @@ function AgentChatPanel({ applicationId }) {
                 {displayText || (streaming && i === messages.length - 1 ? <span className="animate-pulse font-mono">···</span> : '')}
               </div>
               {!isRecruiter && m.sources?.length > 0 && (
-                <p className="eyebrow text-ink-soft/70 mt-1">Answered from: {m.sources.join(', ')}</p>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {m.sources.map((src) => (
+                    <span
+                      key={src}
+                      className="eyebrow inline-flex items-center gap-1 border border-seal/40 text-seal bg-seal-soft/40 rounded-sm px-1.5 py-0.5"
+                      title="Verified from the candidate's own accumulated context — not a generic answer"
+                    >
+                      <span aria-hidden="true">✓</span> {src}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
           );
