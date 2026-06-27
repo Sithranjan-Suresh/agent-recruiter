@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db/db.js';
 import { decrypt } from '../utils/encrypt.js';
-import { accumulateContext, revokeShareLink } from '../services/aicooService.js';
+import { accumulateContext, revokeShareLink, chatWithAgent } from '../services/aicooService.js';
 import { formatProfileOverview, formatExperienceEntry } from '../utils/markdown.js';
 import { authRequired } from '../middleware/authMiddleware.js';
 
@@ -112,6 +112,30 @@ router.post('/applications/:id/revoke', authRequired('candidate'), async (req, r
 
     db.prepare('UPDATE applications SET revoked = 1 WHERE id = ?').run(application.id);
     res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/coach', authRequired('candidate'), async (req, res, next) => {
+  try {
+    const { message } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: { message: 'message is required', code: 'VALIDATION' } });
+    }
+
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+    const apiKey = decrypt(user.aicoo_api_key);
+
+    // Same shared-thread limitation as the recruiter chat: re-anchor every message so a
+    // candidate coaching session can't bleed in a recruiter's question from the same thread.
+    const scopedMessage = `[This is ${user.name} asking about their own profile, for self-coaching — not a recruiter. Disregard any other candidate or conversation discussed earlier in this thread. Answer using only ${user.name}'s own profile/experience notes, speaking directly to them in second person.]\n\n${message}`;
+
+    const upstream = await chatWithAgent(apiKey, scopedMessage);
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    upstream.body.pipe(res);
   } catch (err) {
     next(err);
   }
