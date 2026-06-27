@@ -51,6 +51,12 @@ cp .env.example .env   # VITE_API_URL=http://localhost:4000
 npm run dev            # http://localhost:5173
 ```
 
+### Tests
+```bash
+cd server
+npm test               # unit tests for match scoring, markdown formatting, and encryption — no network calls
+```
+
 ### Demo accounts
 - `candidate@demo.com` / `demo123` — Sarah Chen, ML Engineer, profile complete
 - `recruiter@demo.com` / `demo123` — Stripe recruiting team, 2 jobs posted, 1 active application
