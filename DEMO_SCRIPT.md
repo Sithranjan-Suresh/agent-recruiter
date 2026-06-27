@@ -46,16 +46,25 @@ When the answer streams in, pause on the green citation badge under it.
 > "And it tells me exactly which file it pulled that from. No hallucination,
 > no guessing."
 
-**0:45–0:55 — Decision routing**
-Click "Move to Interview."
-> "That decision routes straight back into her workspace."
+**0:45–1:05 — Decision routing + the second "wow": the agent debrief**
+Click "Move to Interview." This triggers a second, distinct Aicoo call —
+not the same Q&A chat, a synthesis call — so it takes a few seconds longer
+than the question above. Either trim that wait in editing or talk over it.
+> "That decision routes straight back into her workspace. But it doesn't
+> just log a status change — it asks her own agent to write an internal
+> debrief."
+When it lands, pause on the green "Agent debrief" box and read a line of it.
+> "Strengths and gaps, generated from her real notes — not boilerplate.
+> This is the second thing her agent does, beyond answering questions:
+> it synthesizes."
 
-**0:55–1:05 — Close the loop**
+**1:05–1:15 — Close the loop**
 Switch back to the candidate dashboard (or refresh), show the new event in
-the activity log.
-> "Sarah sees it land in real time — no email, no waiting."
+the activity log — both the decision and the debrief text.
+> "Sarah sees it land in real time — no email, no waiting, and she sees the
+> exact same debrief the recruiter saw."
 
-**1:05–1:20 — The architecture beat**
+**1:15–1:30 — The architecture beat**
 Briefly show the landing page's "Architecture note" section.
 > "Every API call here is real and live against Aicoo — init, accumulate,
 > share/create, chat. The one shortcut we took, and disclosed openly, is
@@ -63,8 +72,14 @@ Briefly show the landing page's "Architecture note" section.
 > multi-tenant provisioning — that's the one thing that changes first on
 > the way to production."
 
-**1:20–1:30 — Close**
+**1:30–1:40 — Close**
 > "AgentRecruit: recruiting that doesn't start from zero, every time."
+
+---
+
+Total runtime above is ~100 seconds end to end; the 90-second target from
+the original brief is achievable by cutting the architecture beat down to
+one sentence or trimming the wait on the debrief call in editing.
 
 ---
 
