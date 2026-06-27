@@ -7,6 +7,22 @@ import { authRequired } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
+router.get('/profile', authRequired('candidate'), (req, res, next) => {
+  try {
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+    res.json({
+      targetRole: user.target_role || '',
+      yearsExp: user.years_exp ?? '',
+      skills: user.skills || '',
+      goals: user.goals || '',
+      portfolioUrl: user.portfolio_url || '',
+      workHistory: user.work_history ? JSON.parse(user.work_history) : [],
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/profile', authRequired('candidate'), async (req, res, next) => {
   try {
     const { targetRole, yearsExp, skills, workHistory, goals, portfolioUrl } = req.body;
@@ -32,11 +48,9 @@ router.post('/profile', authRequired('candidate'), async (req, res, next) => {
 
     await accumulateContext(apiKey, files);
 
-    db.prepare('UPDATE users SET aicoo_initialized = 1, years_exp = ?, skills = ? WHERE id = ?').run(
-      yearsExp,
-      skills.join(','),
-      user.id
-    );
+    db.prepare(
+      'UPDATE users SET aicoo_initialized = 1, years_exp = ?, skills = ?, target_role = ?, goals = ?, portfolio_url = ?, work_history = ? WHERE id = ?'
+    ).run(yearsExp, skills.join(','), targetRole, goals || '', portfolioUrl || '', JSON.stringify(workHistory), user.id);
 
     res.json({ success: true });
   } catch (err) {

@@ -74,9 +74,15 @@ async function main() {
         content: formatExperienceEntry(entry),
       })),
     ]);
-    db.prepare('UPDATE users SET aicoo_initialized = 1, years_exp = ?, skills = ? WHERE id = ?').run(
+    db.prepare(
+      'UPDATE users SET aicoo_initialized = 1, years_exp = ?, skills = ?, target_role = ?, goals = ?, portfolio_url = ?, work_history = ? WHERE id = ?'
+    ).run(
       profile.yearsExp,
       profile.skills.join(','),
+      profile.targetRole,
+      profile.goals,
+      profile.portfolioUrl,
+      JSON.stringify(workHistory),
       candidate.id
     );
     console.log('Candidate profile accumulated.');

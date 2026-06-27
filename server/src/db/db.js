@@ -27,3 +27,15 @@ if (!userColumns.includes('years_exp')) {
 if (!userColumns.includes('skills')) {
   db.exec('ALTER TABLE users ADD COLUMN skills TEXT');
 }
+if (!userColumns.includes('target_role')) {
+  db.exec('ALTER TABLE users ADD COLUMN target_role TEXT');
+}
+if (!userColumns.includes('goals')) {
+  db.exec('ALTER TABLE users ADD COLUMN goals TEXT');
+}
+if (!userColumns.includes('portfolio_url')) {
+  db.exec('ALTER TABLE users ADD COLUMN portfolio_url TEXT');
+}
+if (!userColumns.includes('work_history')) {
+  db.exec('ALTER TABLE users ADD COLUMN work_history TEXT');
+}

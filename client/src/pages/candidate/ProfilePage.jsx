@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
@@ -23,6 +23,27 @@ export default function ProfilePage() {
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [hasExistingProfile, setHasExistingProfile] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    api
+      .get('/candidate/profile')
+      .then(({ data }) => {
+        if (data.targetRole) {
+          setHasExistingProfile(true);
+          setForm({
+            targetRole: data.targetRole,
+            yearsExp: String(data.yearsExp ?? ''),
+            skills: data.skills,
+            goals: data.goals,
+            portfolioUrl: data.portfolioUrl,
+          });
+          if (data.workHistory?.length) setWorkHistory(data.workHistory);
+        }
+      })
+      .finally(() => setLoaded(true));
+  }, []);
 
   function updateExperience(index, field, value) {
     setWorkHistory((prev) => prev.map((entry, i) => (i === index ? { ...entry, [field]: value } : entry)));
@@ -76,8 +97,13 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <p className="eyebrow mb-1">New file</p>
-      <h1 className="text-3xl font-display font-semibold text-ink mb-8">Set up your profile</h1>
+      <p className="eyebrow mb-1">{hasExistingProfile ? 'Case file' : 'New file'}</p>
+      <h1 className="text-3xl font-display font-semibold text-ink mb-8">
+        {hasExistingProfile ? 'Update your profile' : 'Set up your profile'}
+      </h1>
+      {!loaded ? (
+        <p className="text-ink-soft">Loading…</p>
+      ) : (
       <form onSubmit={onSubmit} className="space-y-6 bg-paper-card border border-line rounded-md p-6">
         {errors.submit && <p className="text-stamp-dark text-sm">{errors.submit}</p>}
 
@@ -159,6 +185,7 @@ export default function ProfilePage() {
           {submitting ? 'Setting up your agent…' : 'Save profile'}
         </button>
       </form>
+      )}
     </Layout>
   );
 }
