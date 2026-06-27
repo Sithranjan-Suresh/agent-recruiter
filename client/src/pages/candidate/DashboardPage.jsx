@@ -28,7 +28,7 @@ export default function DashboardPage() {
   const { data: applications, isLoading } = useQuery({
     queryKey: ['candidate-applications'],
     queryFn: () => api.get('/candidate/applications').then((r) => r.data),
-    refetchInterval: 30000,
+    refetchInterval: 4000,
   });
 
   const revokeMutation = useMutation({
@@ -58,7 +58,8 @@ export default function DashboardPage() {
             </div>
             <ul className="mt-4 text-xs text-ink-soft space-y-1 border-l-2 border-line pl-3">
               {app.recentEvents.map((ev, i) => (
-                <li key={i} className="font-mono">
+                <li key={i} className={`font-mono ${i === 0 ? 'text-ink font-medium' : ''}`}>
+                  {i === 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-stamp mr-1.5 align-middle animate-pulse" />}
                   {ev.event_summary} <span className="text-line">·</span> {new Date(ev.created_at).toLocaleString()}
                 </li>
               ))}

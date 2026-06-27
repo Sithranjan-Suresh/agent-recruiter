@@ -27,6 +27,14 @@ on 1 role," with the live activity log of recruiter actions already on it.
 > "Sarah set up her profile once — work history, skills, goals. That's
 > accumulated into a real Aicoo workspace, not stored as a PDF."
 
+**Optional stronger version of 0:25–0:55 — split screen**
+If you can record two windows side by side (candidate dashboard on the
+left, recruiter chat on the right), this is the single best "wow" beat
+available: ask the agent a question on the right, and within ~4 seconds
+the candidate's dashboard on the left lights up with "Recruiter asked:
+'<that exact question>'" — a pulsing dot marks the newest event. It's a
+visible, live, two-person interaction, not narration over a static UI.
+
 **0:25–0:45 — Recruiter side: the agent answers**
 Log in as `recruiter@demo.com`. Open the inbox — point out the "Strong
 match" badge, computed from skill/experience overlap against the job

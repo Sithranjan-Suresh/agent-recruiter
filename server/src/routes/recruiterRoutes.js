@@ -115,9 +115,10 @@ router.post('/applications/:id/chat', authRequired('recruiter'), async (req, res
 
     const upstream = await chatWithAgent(candidateApiKey, scopedMessage, conversationId);
 
+    const questionSnippet = message.length > 100 ? `${message.slice(0, 100)}…` : message;
     db.prepare(
       `INSERT INTO agent_events (id, application_id, event_type, event_summary) VALUES (?, ?, 'question_asked', ?)`
-    ).run(uuid(), row.id, 'Recruiter asked a question');
+    ).run(uuid(), row.id, `Recruiter asked: "${questionSnippet}"`);
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
