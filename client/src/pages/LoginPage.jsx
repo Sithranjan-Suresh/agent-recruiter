@@ -31,6 +31,9 @@ export default function LoginPage() {
       <form onSubmit={onSubmit} className="bg-paper-card border border-line rounded-md p-8 w-full max-w-sm space-y-4">
         <p className="eyebrow">Access — Sign in</p>
         <h1 className="text-2xl font-display font-semibold text-ink -mt-1">Log in</h1>
+        {params.get('expired') && !error && (
+          <p className="text-stamp-dark text-sm">Your session expired. Log in again to continue.</p>
+        )}
         {error && <p className="text-stamp-dark text-sm">{error}</p>}
         <input
           type="email"
