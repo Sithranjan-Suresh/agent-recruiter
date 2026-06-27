@@ -14,3 +14,8 @@ db.pragma('foreign_keys = ON');
 
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf-8');
 db.exec(schema);
+
+const applicationColumns = db.prepare("PRAGMA table_info(applications)").all().map((c) => c.name);
+if (!applicationColumns.includes('revoked')) {
+  db.exec('ALTER TABLE applications ADD COLUMN revoked INTEGER NOT NULL DEFAULT 0');
+}

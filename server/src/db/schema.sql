@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS applications (
   share_link_id TEXT,
   share_link_url TEXT,
   agent_url TEXT,
+  revoked INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   decided_at TEXT,
   UNIQUE (candidate_id, job_id)

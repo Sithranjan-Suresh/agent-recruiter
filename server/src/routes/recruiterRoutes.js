@@ -63,6 +63,9 @@ router.get('/applications/:id/chat-token', authRequired('recruiter'), (req, res,
     if (!row || row.recruiterId !== req.user.id) {
       return res.status(404).json({ error: { message: 'Application not found', code: 'NOT_FOUND' } });
     }
+    if (row.revoked) {
+      return res.status(410).json({ error: { message: 'This link has expired', code: 'LINK_REVOKED' } });
+    }
 
     if (row.status === 'agent_intro_sent') {
       db.prepare(`UPDATE applications SET status = 'recruiter_engaged' WHERE id = ?`).run(row.id);
@@ -88,6 +91,9 @@ router.post('/applications/:id/chat', authRequired('recruiter'), async (req, res
       .get(req.params.id);
     if (!row || row.recruiterId !== req.user.id) {
       return res.status(404).json({ error: { message: 'Application not found', code: 'NOT_FOUND' } });
+    }
+    if (row.revoked) {
+      return res.status(410).json({ error: { message: 'This link has expired', code: 'LINK_REVOKED' } });
     }
 
     const candidate = db.prepare('SELECT aicoo_api_key FROM users WHERE id = ?').get(row.candidate_id);

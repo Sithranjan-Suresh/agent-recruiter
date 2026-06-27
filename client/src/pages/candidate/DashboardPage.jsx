@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import Layout from '../../components/Layout';
@@ -23,10 +23,16 @@ const STATUS_COLOR = {
 };
 
 export default function DashboardPage() {
+  const queryClient = useQueryClient();
   const { data: applications, isLoading } = useQuery({
     queryKey: ['candidate-applications'],
     queryFn: () => api.get('/candidate/applications').then((r) => r.data),
     refetchInterval: 30000,
+  });
+
+  const revokeMutation = useMutation({
+    mutationFn: (id) => api.post(`/candidate/applications/${id}/revoke`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['candidate-applications'] }),
   });
 
   return (
@@ -53,6 +59,19 @@ export default function DashboardPage() {
                 <li key={i}>{ev.event_summary} · {new Date(ev.created_at).toLocaleString()}</li>
               ))}
             </ul>
+            <div className="mt-3">
+              {app.revoked ? (
+                <span className="text-xs text-slate-400">Agent access revoked</span>
+              ) : (
+                <button
+                  onClick={() => revokeMutation.mutate(app.id)}
+                  disabled={revokeMutation.isPending}
+                  className="text-xs text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+                >
+                  Revoke agent access
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
