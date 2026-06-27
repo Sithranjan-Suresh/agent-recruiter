@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { db } from '../db/db.js';
 import { decrypt } from '../utils/encrypt.js';
-import { createShareLink, accumulateContext } from './aicooService.js';
+import { createShareLink, accumulateContext, chatWithAgentText } from './aicooService.js';
 import { formatDecision } from '../utils/markdown.js';
 
 export async function applyToJob(candidateId, jobId) {
@@ -81,10 +81,20 @@ export async function recordDecision(recruiterId, applicationId, decision) {
   const candidate = db.prepare('SELECT aicoo_api_key FROM users WHERE id = ?').get(row.candidate_id);
   const candidateApiKey = decrypt(candidate.aicoo_api_key);
 
+  let debrief = '';
+  try {
+    debrief = await chatWithAgentText(
+      candidateApiKey,
+      `[Internal task — do not address a recruiter directly, this is not a chat reply.] Write a 2-3 sentence internal hiring debrief summarizing why this candidate is or isn't a strong fit for "${row.jobTitle}", based only on their own profile/experience notes. This is for internal handoff between reviewers, not a recruiter-facing answer.`
+    );
+  } catch {
+    debrief = '';
+  }
+
   await accumulateContext(candidateApiKey, [
     {
       path: `Candidates/${row.candidate_id}/Applications/${row.jobTitle}_decision.md`,
-      content: formatDecision(decision, row.recruiterCompany),
+      content: formatDecision(decision, row.recruiterCompany, debrief),
     },
   ]);
 
@@ -94,6 +104,13 @@ export async function recordDecision(recruiterId, applicationId, decision) {
     applicationId,
     `Decision: ${decision}`
   );
+  if (debrief) {
+    db.prepare(`INSERT INTO agent_events (id, application_id, event_type, event_summary) VALUES (?, ?, 'decision_debrief', ?)`).run(
+      uuid(),
+      applicationId,
+      `Agent debrief: ${debrief}`
+    );
+  }
 
-  return db.prepare('SELECT * FROM applications WHERE id = ?').get(applicationId);
+  return { ...db.prepare('SELECT * FROM applications WHERE id = ?').get(applicationId), debrief };
 }

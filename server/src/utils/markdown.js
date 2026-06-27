@@ -57,11 +57,14 @@ ${teamDescription || ''}
 `;
 }
 
-export function formatDecision(decision, recruiterCompany) {
+export function formatDecision(decision, recruiterCompany, debrief) {
   return `# Application Decision
 
 **Decision:** ${decision}
 **Date:** ${new Date().toISOString()}
 **Recruiter Company:** ${recruiterCompany}
+
+## Agent Debrief
+${debrief || 'Not generated.'}
 `;
 }

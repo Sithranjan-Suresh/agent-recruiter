@@ -54,3 +54,22 @@ export function chatWithAgent(apiKey, message, conversationId) {
     stream: true,
   });
 }
+
+export async function chatWithAgentText(apiKey, message) {
+  const res = await chatWithAgent(apiKey, message);
+  const body = await res.text();
+  let full = '';
+  for (const line of body.split('\n')) {
+    if (!line.trim()) continue;
+    try {
+      const event = JSON.parse(line);
+      if (event.type === 'text-delta') full += event.textDelta;
+    } catch {
+      // non-JSON line, skip
+    }
+  }
+  return full
+    .replace(/<think>[\s\S]*?<\/think>/g, '')
+    .replace(/<suggestions>[\s\S]*?<\/suggestions>/g, '')
+    .trim();
+}

@@ -39,3 +39,19 @@ if (!userColumns.includes('portfolio_url')) {
 if (!userColumns.includes('work_history')) {
   db.exec('ALTER TABLE users ADD COLUMN work_history TEXT');
 }
+
+const agentEventsSql = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'agent_events'").get();
+if (agentEventsSql && !agentEventsSql.sql.includes('decision_debrief')) {
+  db.exec(`
+    ALTER TABLE agent_events RENAME TO agent_events_old;
+    CREATE TABLE agent_events (
+      id TEXT PRIMARY KEY,
+      application_id TEXT NOT NULL REFERENCES applications(id),
+      event_type TEXT NOT NULL CHECK (event_type IN ('intro_sent', 'recruiter_opened', 'question_asked', 'decision_made', 'decision_debrief')),
+      event_summary TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    INSERT INTO agent_events SELECT * FROM agent_events_old;
+    DROP TABLE agent_events_old;
+  `);
+}

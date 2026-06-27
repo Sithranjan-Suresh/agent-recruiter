@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS applications (
 CREATE TABLE IF NOT EXISTS agent_events (
   id TEXT PRIMARY KEY,
   application_id TEXT NOT NULL REFERENCES applications(id),
-  event_type TEXT NOT NULL CHECK (event_type IN ('intro_sent', 'recruiter_opened', 'question_asked', 'decision_made')),
+  event_type TEXT NOT NULL CHECK (event_type IN ('intro_sent', 'recruiter_opened', 'question_asked', 'decision_made', 'decision_debrief')),
   event_summary TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

@@ -200,14 +200,16 @@ function AgentChatPanel({ applicationId }) {
 function DecisionPanel({ applicationId, candidateName, decided, decidedStatus }) {
   const queryClient = useQueryClient();
   const [confirmation, setConfirmation] = useState('');
+  const [debrief, setDebrief] = useState('');
 
   const [error, setError] = useState('');
 
   const decisionMutation = useMutation({
     mutationFn: (decision) => api.post(`/applications/${applicationId}/decision`, { decision }),
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       setError('');
       setConfirmation(`Decision recorded. ${candidateName} notified.`);
+      if (data.debrief) setDebrief(data.debrief);
       queryClient.invalidateQueries({ queryKey: ['recruiter-inbox'] });
     },
     onError: (err) => {
@@ -224,6 +226,12 @@ function DecisionPanel({ applicationId, candidateName, decided, decidedStatus })
         <h2 className="font-display font-semibold text-ink text-lg">{candidateName}</h2>
       </div>
       {confirmation && <p className="text-sm text-seal font-medium">{confirmation}</p>}
+      {debrief && (
+        <div className="border border-seal/30 bg-seal-soft/40 rounded-sm p-3">
+          <p className="eyebrow text-seal mb-1">Agent debrief — internal handoff</p>
+          <p className="text-sm text-ink">{debrief}</p>
+        </div>
+      )}
       {error && <p className="text-sm text-stamp-dark">{error}</p>}
       <div className="space-y-2 pt-1">
         <button

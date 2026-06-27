@@ -18,8 +18,8 @@ router.post('/', authRequired('candidate'), async (req, res, next) => {
 router.post('/:id/decision', authRequired('recruiter'), async (req, res, next) => {
   try {
     const { decision } = req.body;
-    const application = await recordDecision(req.user.id, req.params.id, decision);
-    res.json({ success: true, application });
+    const { debrief, ...application } = await recordDecision(req.user.id, req.params.id, decision);
+    res.json({ success: true, application, debrief });
   } catch (err) {
     next(err);
   }
