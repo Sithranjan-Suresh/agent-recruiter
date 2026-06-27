@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
+import { useAuth } from '../../context/AuthContext';
 import Layout from '../../components/Layout';
 
 const emptyExperience = { company: '', title: '', dates: '', summary: '' };
 
 export default function ProfilePage() {
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
   const [form, setForm] = useState({
     targetRole: '',
     yearsExp: '',
@@ -46,6 +48,7 @@ export default function ProfilePage() {
         goals: form.goals,
         portfolioUrl: form.portfolioUrl || undefined,
       });
+      updateUser({ aicooInitialized: true });
       setSuccess(true);
       setTimeout(() => navigate('/jobs'), 1200);
     } catch (err) {

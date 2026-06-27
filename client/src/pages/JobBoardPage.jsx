@@ -22,15 +22,19 @@ function ApplyButton({ jobId }) {
 
   if (!user || user.role !== 'candidate') return null;
 
+  const profileIncomplete = !user.aicooInitialized;
+
   return (
-    <div>
+    <div className="text-right">
       <button
         onClick={() => applyMutation.mutate()}
-        disabled={applyMutation.isPending || applyMutation.isSuccess}
+        disabled={profileIncomplete || applyMutation.isPending || applyMutation.isSuccess}
+        title={profileIncomplete ? 'Complete your profile first' : undefined}
         className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50"
       >
         {applyMutation.isPending ? 'Setting up your agent...' : applyMutation.isSuccess ? 'Agent active' : 'Apply via Agent'}
       </button>
+      {profileIncomplete && <p className="text-xs text-slate-400 mt-1">Complete your profile first</p>}
       {toast && <p className="text-xs text-slate-500 mt-1">{toast}</p>}
     </div>
   );

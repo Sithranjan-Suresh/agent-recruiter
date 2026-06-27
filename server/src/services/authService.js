@@ -32,7 +32,7 @@ export async function signup({ email, password, role, name, company }) {
      VALUES (?, ?, ?, ?, ?, ?, ?, 0)`
   ).run(id, email, passwordHash, role, name, company || null, encrypt(apiKey));
 
-  const user = { id, role, name };
+  const user = { id, role, name, aicooInitialized: false };
   return { token: signToken(user), user };
 }
 
@@ -49,6 +49,6 @@ export async function login({ email, password }) {
     err.status = 401;
     throw err;
   }
-  const user = { id: row.id, role: row.role, name: row.name };
+  const user = { id: row.id, role: row.role, name: row.name, aicooInitialized: !!row.aicoo_initialized };
   return { token: signToken(user), user };
 }
