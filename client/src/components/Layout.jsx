@@ -1,39 +1,59 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+function Tab({ to, children }) {
+  const location = useLocation();
+  const active = location.pathname === to;
+  return (
+    <Link
+      to={to}
+      className={`eyebrow px-3 py-2 rounded-t-md border border-b-0 transition-colors ${
+        active
+          ? 'bg-paper-card border-line text-ink relative top-px'
+          : 'border-transparent text-ink-soft hover:text-ink'
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
-        <Link to="/jobs" className="font-semibold text-indigo-600 text-lg">
-          AgentRecruit
-        </Link>
-        <nav className="flex items-center gap-4 text-sm text-slate-600">
-          <Link to="/jobs">Jobs</Link>
-          {user?.role === 'candidate' && (
-            <>
-              <Link to="/candidate/dashboard">Dashboard</Link>
-              <Link to="/candidate/profile">Profile</Link>
-            </>
-          )}
-          {user?.role === 'recruiter' && (
-            <>
-              <Link to="/recruiter/inbox">Inbox</Link>
-              <Link to="/recruiter/jobs/new">Post a Job</Link>
-            </>
-          )}
-          {user ? (
-            <button onClick={logout} className="text-slate-500 hover:text-slate-800">
-              Log out
-            </button>
-          ) : (
-            <Link to="/login">Log in</Link>
-          )}
-        </nav>
+    <div className="min-h-screen">
+      <header className="px-6 pt-4">
+        <div className="max-w-5xl mx-auto flex items-end justify-between">
+          <Link to="/jobs" className="font-display text-lg font-semibold text-ink pb-2 pr-4">
+            AgentRecruit<span className="text-stamp">.</span>
+          </Link>
+          <nav className="flex items-end gap-1">
+            <Tab to="/jobs">Jobs</Tab>
+            {user?.role === 'candidate' && (
+              <>
+                <Tab to="/candidate/dashboard">Dashboard</Tab>
+                <Tab to="/candidate/profile">Profile</Tab>
+              </>
+            )}
+            {user?.role === 'recruiter' && (
+              <>
+                <Tab to="/recruiter/inbox">Inbox</Tab>
+                <Tab to="/recruiter/jobs/new">Post a Job</Tab>
+              </>
+            )}
+            {user ? (
+              <button onClick={logout} className="eyebrow px-3 py-2 text-ink-soft hover:text-stamp transition-colors">
+                Log out
+              </button>
+            ) : (
+              <Tab to="/login">Log in</Tab>
+            )}
+          </nav>
+        </div>
+        <div className="max-w-5xl mx-auto border-b border-line" />
       </header>
-      <main className="max-w-5xl mx-auto px-6 py-8">{children}</main>
+      <main className="max-w-5xl mx-auto px-6 py-10">{children}</main>
     </div>
   );
 }

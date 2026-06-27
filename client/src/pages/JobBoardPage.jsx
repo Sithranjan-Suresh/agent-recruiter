@@ -4,6 +4,7 @@ import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import { CardSkeleton } from '../components/Skeleton';
+import StampBadge from '../components/StampBadge';
 
 function ApplyButton({ jobId }) {
   const { user } = useAuth();
@@ -32,20 +33,28 @@ function ApplyButton({ jobId }) {
 
   const profileIncomplete = !user.aicooInitialized;
 
+  if (applyMutation.isSuccess) {
+    return (
+      <div className="text-right">
+        <StampBadge tone="seal">Agent active</StampBadge>
+      </div>
+    );
+  }
+
   return (
     <div className="text-right">
       <button
         onClick={() => applyMutation.mutate()}
-        disabled={profileIncomplete || applyMutation.isPending || applyMutation.isSuccess}
+        disabled={profileIncomplete || applyMutation.isPending}
         title={profileIncomplete ? 'Complete your profile first' : undefined}
-        className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50 transition-colors hover:bg-indigo-700"
+        className="stamp-press font-display text-sm font-semibold bg-stamp text-white rounded-sm px-4 py-2 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-stamp-dark transition-colors"
       >
-        {applyMutation.isPending ? 'Setting up your agent...' : applyMutation.isSuccess ? 'Agent active' : 'Apply via Agent'}
+        {applyMutation.isPending ? 'Setting up your agent…' : 'Apply via Agent'}
       </button>
-      {profileIncomplete && <p className="text-xs text-slate-400 mt-1">Complete your profile first</p>}
-      {toast && <p className="text-xs text-slate-500 mt-1">{toast}</p>}
+      {profileIncomplete && <p className="eyebrow mt-1.5 text-ink-soft">Complete your profile first</p>}
+      {toast && <p className="text-xs text-ink-soft mt-1.5">{toast}</p>}
       {rateLimited && (
-        <button onClick={() => applyMutation.mutate()} className="text-xs text-indigo-600 underline mt-1">
+        <button onClick={() => applyMutation.mutate()} className="eyebrow text-stamp-dark underline mt-1 block ml-auto">
           Retry
         </button>
       )}
@@ -61,24 +70,32 @@ export default function JobBoardPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-6">Open roles</h1>
+      <p className="eyebrow mb-1">Open requisitions</p>
+      <h1 className="text-3xl font-display font-semibold text-ink mb-8">Roles taking agent introductions</h1>
       {isLoading && <CardSkeleton />}
       <div className="grid gap-4">
         {jobs?.map((job) => (
-          <div key={job.id} className="bg-white rounded-xl shadow-sm p-5 flex justify-between items-start transition-shadow hover:shadow-md">
+          <div
+            key={job.id}
+            className="bg-paper-card border border-line rounded-md p-5 flex justify-between items-start gap-6 transition-shadow hover:shadow-[2px_3px_0_var(--color-line)]"
+          >
             <div>
-              <h2 className="font-semibold text-slate-900">{job.title}</h2>
-              <p className="text-sm text-slate-500">{job.recruiter.company} · {job.location}</p>
-              <ul className="text-sm text-slate-600 mt-2 list-disc pl-5">
+              <p className="eyebrow mb-1">File — {job.recruiter.company}</p>
+              <h2 className="font-display text-lg font-semibold text-ink">{job.title}</h2>
+              <p className="text-sm text-ink-soft mt-0.5">{job.location}</p>
+              <ul className="text-sm text-ink mt-3 space-y-1">
                 {job.requirements.slice(0, 3).map((r, i) => (
-                  <li key={i}>{r}</li>
+                  <li key={i} className="flex gap-2">
+                    <span className="text-stamp">—</span>
+                    {r}
+                  </li>
                 ))}
               </ul>
             </div>
             <ApplyButton jobId={job.id} />
           </div>
         ))}
-        {jobs?.length === 0 && <p className="text-slate-500">No open roles right now.</p>}
+        {jobs?.length === 0 && <p className="text-ink-soft">No open roles right now.</p>}
       </div>
     </Layout>
   );

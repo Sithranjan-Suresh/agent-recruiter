@@ -27,17 +27,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <form onSubmit={onSubmit} className="bg-white shadow-md rounded-xl p-8 w-full max-w-sm space-y-4">
-        <h1 className="text-2xl font-semibold text-slate-900">Log in</h1>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <form onSubmit={onSubmit} className="bg-paper-card border border-line rounded-md p-8 w-full max-w-sm space-y-4">
+        <p className="eyebrow">Access — Sign in</p>
+        <h1 className="text-2xl font-display font-semibold text-ink -mt-1">Log in</h1>
+        {error && <p className="text-stamp-dark text-sm">{error}</p>}
         <input
           type="email"
           required
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+          className="w-full border border-line rounded-sm px-3 py-2 bg-white focus:outline-none focus-visible:outline-2 focus-visible:outline-stamp"
         />
         <input
           type="password"
@@ -45,16 +46,16 @@ export default function LoginPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+          className="w-full border border-line rounded-sm px-3 py-2 bg-white focus:outline-none focus-visible:outline-2 focus-visible:outline-stamp"
         />
         <button
           disabled={loading}
-          className="w-full bg-indigo-600 text-white rounded-lg py-2 font-medium disabled:opacity-50"
+          className="stamp-press w-full font-display font-semibold bg-ink text-paper-card rounded-sm py-2 disabled:opacity-50 hover:bg-stamp-dark transition-colors"
         >
-          {loading ? 'Logging in...' : 'Log in'}
+          {loading ? 'Logging in…' : 'Log in'}
         </button>
-        <p className="text-sm text-slate-500">
-          No account? <Link to="/signup" className="text-indigo-600">Sign up</Link>
+        <p className="text-sm text-ink-soft">
+          No account? <Link to="/signup" className="text-stamp-dark font-medium">Sign up</Link>
         </p>
       </form>
     </div>

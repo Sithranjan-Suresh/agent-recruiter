@@ -1,1 +1,76 @@
 @import "tailwindcss";
+
+@theme {
+  --color-paper: #efece3;
+  --color-paper-card: #fbfaf6;
+  --color-ink: #1c2129;
+  --color-ink-soft: #5b6270;
+  --color-line: #d7d2c3;
+  --color-stamp: #c2410c;
+  --color-stamp-dark: #9a330a;
+  --color-seal: #2f6b4f;
+  --color-seal-soft: #e3ede7;
+  --color-stamp-soft: #f7e6dc;
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background: var(--color-paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(28, 33, 41, 0.04) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-stamp);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-stamp-soft);
+  }
+}
+
+@layer utilities {
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .stamp-press {
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+  .stamp-press:active:not(:disabled) {
+    transform: scale(0.96) rotate(-0.5deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stamp-press:active:not(:disabled) {
+      transform: none;
+    }
+    * {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}

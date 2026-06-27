@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import Layout from '../../components/Layout';
+import StampBadge from '../../components/StampBadge';
 
 const emptyExperience = { company: '', title: '', dates: '', summary: '' };
+const fieldClass = 'w-full border border-line rounded-sm px-3 py-2 bg-white';
+const labelClass = 'eyebrow block mb-1.5';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -50,7 +53,7 @@ export default function ProfilePage() {
       });
       updateUser({ aicooInitialized: true });
       setSuccess(true);
-      setTimeout(() => navigate('/jobs'), 1200);
+      setTimeout(() => navigate('/jobs'), 1300);
     } catch (err) {
       setErrors({ submit: err.response?.data?.error?.message || 'Something went wrong' });
     } finally {
@@ -61,10 +64,11 @@ export default function ProfilePage() {
   if (success) {
     return (
       <Layout>
-        <div className="text-center py-20">
-          <div className="text-5xl mb-4">✓</div>
-          <h1 className="text-2xl font-semibold text-slate-900">Your agent is ready</h1>
-          <p className="text-slate-500 mt-2">Redirecting you to the job board...</p>
+        <div className="text-center py-24">
+          <div className="inline-block">
+            <StampBadge tone="seal">File opened — agent ready</StampBadge>
+          </div>
+          <p className="text-ink-soft mt-4">Redirecting you to the job board…</p>
         </div>
       </Layout>
     );
@@ -72,100 +76,87 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-6">Set up your profile</h1>
-      <form onSubmit={onSubmit} className="space-y-6 bg-white p-6 rounded-xl shadow-sm">
-        {errors.submit && <p className="text-red-600 text-sm">{errors.submit}</p>}
+      <p className="eyebrow mb-1">New file</p>
+      <h1 className="text-3xl font-display font-semibold text-ink mb-8">Set up your profile</h1>
+      <form onSubmit={onSubmit} className="space-y-6 bg-paper-card border border-line rounded-md p-6">
+        {errors.submit && <p className="text-stamp-dark text-sm">{errors.submit}</p>}
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Target role</label>
-          <input
-            value={form.targetRole}
-            onChange={(e) => setForm({ ...form, targetRole: e.target.value })}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
-          />
-          {errors.targetRole && <p className="text-red-600 text-xs mt-1">{errors.targetRole}</p>}
+          <label className={labelClass}>Target role</label>
+          <input value={form.targetRole} onChange={(e) => setForm({ ...form, targetRole: e.target.value })} className={fieldClass} />
+          {errors.targetRole && <p className="text-stamp-dark text-xs mt-1">{errors.targetRole}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Years of experience</label>
+          <label className={labelClass}>Years of experience</label>
           <input
             type="number"
             value={form.yearsExp}
             onChange={(e) => setForm({ ...form, yearsExp: e.target.value })}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
+            className={fieldClass}
           />
-          {errors.yearsExp && <p className="text-red-600 text-xs mt-1">{errors.yearsExp}</p>}
+          {errors.yearsExp && <p className="text-stamp-dark text-xs mt-1">{errors.yearsExp}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Skills (comma-separated)</label>
-          <input
-            value={form.skills}
-            onChange={(e) => setForm({ ...form, skills: e.target.value })}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
-          />
-          {errors.skills && <p className="text-red-600 text-xs mt-1">{errors.skills}</p>}
+          <label className={labelClass}>Skills (comma-separated)</label>
+          <input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} className={fieldClass} />
+          {errors.skills && <p className="text-stamp-dark text-xs mt-1">{errors.skills}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Goals / summary</label>
-          <textarea
-            value={form.goals}
-            onChange={(e) => setForm({ ...form, goals: e.target.value })}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
-            rows={3}
-          />
+          <label className={labelClass}>Goals / summary</label>
+          <textarea value={form.goals} onChange={(e) => setForm({ ...form, goals: e.target.value })} className={fieldClass} rows={3} />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Portfolio URL (optional)</label>
-          <input
-            value={form.portfolioUrl}
-            onChange={(e) => setForm({ ...form, portfolioUrl: e.target.value })}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
-          />
+          <label className={labelClass}>Portfolio URL (optional)</label>
+          <input value={form.portfolioUrl} onChange={(e) => setForm({ ...form, portfolioUrl: e.target.value })} className={fieldClass} />
         </div>
 
         <div>
-          <h2 className="text-sm font-medium text-slate-700 mb-2">Work history</h2>
+          <label className={labelClass}>Work history</label>
           <div className="space-y-3">
             {workHistory.map((entry, i) => (
-              <div key={i} className="grid grid-cols-2 gap-2 border border-slate-200 rounded-lg p-3">
+              <div key={i} className="grid grid-cols-2 gap-2 border border-line rounded-sm p-3 bg-paper">
                 <input
                   placeholder="Company"
                   value={entry.company}
                   onChange={(e) => updateExperience(i, 'company', e.target.value)}
-                  className="border border-slate-300 rounded-lg px-3 py-2"
+                  className="border border-line rounded-sm px-3 py-2 bg-white"
                 />
                 <input
                   placeholder="Title"
                   value={entry.title}
                   onChange={(e) => updateExperience(i, 'title', e.target.value)}
-                  className="border border-slate-300 rounded-lg px-3 py-2"
+                  className="border border-line rounded-sm px-3 py-2 bg-white"
                 />
                 <input
                   placeholder="Dates"
                   value={entry.dates}
                   onChange={(e) => updateExperience(i, 'dates', e.target.value)}
-                  className="border border-slate-300 rounded-lg px-3 py-2 col-span-2"
+                  className="border border-line rounded-sm px-3 py-2 col-span-2 bg-white"
                 />
                 <textarea
                   placeholder="Summary"
                   value={entry.summary}
                   onChange={(e) => updateExperience(i, 'summary', e.target.value)}
-                  className="border border-slate-300 rounded-lg px-3 py-2 col-span-2"
+                  className="border border-line rounded-sm px-3 py-2 col-span-2 bg-white"
                   rows={2}
                 />
               </div>
             ))}
           </div>
-          <button type="button" onClick={addExperience} className="text-indigo-600 text-sm mt-2">
+          <button type="button" onClick={addExperience} className="eyebrow text-stamp-dark mt-2 hover:text-stamp transition-colors">
             + Add another role
           </button>
         </div>
 
-        <button disabled={submitting} className="bg-indigo-600 text-white rounded-lg px-6 py-2 font-medium disabled:opacity-50">
-          {submitting ? 'Setting up your agent...' : 'Save profile'}
+        <button
+          disabled={submitting}
+          className="stamp-press font-display font-semibold bg-stamp text-white rounded-sm px-6 py-2 disabled:opacity-50 hover:bg-stamp-dark transition-colors"
+        >
+          {submitting ? 'Setting up your agent…' : 'Save profile'}
         </button>
       </form>
     </Layout>

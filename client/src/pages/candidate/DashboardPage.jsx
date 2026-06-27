@@ -3,23 +3,24 @@ import { Link } from 'react-router-dom';
 import { api } from '../../api/client';
 import Layout from '../../components/Layout';
 import { CardSkeleton } from '../../components/Skeleton';
+import StampBadge from '../../components/StampBadge';
 
 const STATUS_LABEL = {
-  agent_intro_sent: 'Agent intro sent',
-  recruiter_engaged: 'Recruiter engaged',
+  agent_intro_sent: 'Intro sent',
+  recruiter_engaged: 'Engaged',
   interview: 'Interview',
   offer: 'Offer',
   declined: 'Not moving forward',
   hold: 'On hold',
 };
 
-const STATUS_COLOR = {
-  agent_intro_sent: 'bg-blue-100 text-blue-700',
-  recruiter_engaged: 'bg-amber-100 text-amber-700',
-  interview: 'bg-green-100 text-green-700',
-  offer: 'bg-emerald-100 text-emerald-700',
-  declined: 'bg-slate-200 text-slate-600',
-  hold: 'bg-yellow-100 text-yellow-700',
+const STATUS_TONE = {
+  agent_intro_sent: 'ink',
+  recruiter_engaged: 'stamp',
+  interview: 'seal',
+  offer: 'seal',
+  declined: 'muted',
+  hold: 'stamp',
 };
 
 export default function DashboardPage() {
@@ -37,36 +38,39 @@ export default function DashboardPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-2">Your applications</h1>
+      <p className="eyebrow mb-1">Case file — open applications</p>
+      <h1 className="text-3xl font-display font-semibold text-ink mb-1">Your applications</h1>
       {applications?.length > 0 && (
-        <p className="text-sm text-slate-500 mb-6">Your agent is active on {applications.length} role{applications.length === 1 ? '' : 's'}.</p>
+        <p className="text-sm text-ink-soft mb-8">
+          Your agent is active on {applications.length} role{applications.length === 1 ? '' : 's'}.
+        </p>
       )}
       {isLoading && <CardSkeleton />}
       <div className="space-y-4">
         {applications?.map((app) => (
-          <div key={app.id} className="bg-white rounded-xl shadow-sm p-5 transition-shadow hover:shadow-md">
+          <div key={app.id} className="bg-paper-card border border-line rounded-md p-5 transition-shadow hover:shadow-[2px_3px_0_var(--color-line)]">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="font-semibold text-slate-900">{app.job.title}</h2>
-                <p className="text-sm text-slate-500">{app.job.company}</p>
+                <p className="eyebrow mb-1">{app.job.company}</p>
+                <h2 className="font-display font-semibold text-ink text-lg">{app.job.title}</h2>
               </div>
-              <span className={`text-xs px-2 py-1 rounded-full font-medium ${STATUS_COLOR[app.status] || 'bg-slate-100 text-slate-600'}`}>
-                {STATUS_LABEL[app.status] || app.status}
-              </span>
+              <StampBadge tone={STATUS_TONE[app.status] || 'muted'}>{STATUS_LABEL[app.status] || app.status}</StampBadge>
             </div>
-            <ul className="mt-3 text-xs text-slate-500 space-y-1">
+            <ul className="mt-4 text-xs text-ink-soft space-y-1 border-l-2 border-line pl-3">
               {app.recentEvents.map((ev, i) => (
-                <li key={i}>{ev.event_summary} · {new Date(ev.created_at).toLocaleString()}</li>
+                <li key={i} className="font-mono">
+                  {ev.event_summary} <span className="text-line">·</span> {new Date(ev.created_at).toLocaleString()}
+                </li>
               ))}
             </ul>
-            <div className="mt-3">
+            <div className="mt-4">
               {app.revoked ? (
-                <span className="text-xs text-slate-400">Agent access revoked</span>
+                <span className="eyebrow text-ink-soft">Agent access revoked</span>
               ) : (
                 <button
                   onClick={() => revokeMutation.mutate(app.id)}
                   disabled={revokeMutation.isPending}
-                  className="text-xs text-red-500 hover:text-red-700 transition-colors disabled:opacity-50"
+                  className="eyebrow text-stamp-dark hover:text-stamp transition-colors disabled:opacity-50"
                 >
                   Revoke agent access
                 </button>
@@ -76,9 +80,9 @@ export default function DashboardPage() {
         ))}
       </div>
       {applications?.length === 0 && (
-        <p className="text-slate-500">
+        <p className="text-ink-soft">
           You haven't applied to any roles yet.{' '}
-          <Link to="/jobs" className="text-indigo-600">Browse jobs →</Link>
+          <Link to="/jobs" className="text-stamp-dark font-medium">Browse jobs →</Link>
         </p>
       )}
     </Layout>

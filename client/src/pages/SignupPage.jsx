@@ -15,7 +15,7 @@ export default function SignupPage() {
     setError('');
     setLoading(true);
     try {
-      const user = await signup({ ...form, role });
+      await signup({ ...form, role });
       navigate(role === 'candidate' ? '/candidate/profile' : '/recruiter/jobs/new');
     } catch (err) {
       setError(err.response?.data?.error?.message || 'Signup failed');
@@ -25,28 +25,31 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <form onSubmit={onSubmit} className="bg-white shadow-md rounded-xl p-8 w-full max-w-sm space-y-4">
-        <h1 className="text-2xl font-semibold text-slate-900">Sign up</h1>
-        <div className="flex gap-2">
+    <div className="min-h-screen flex items-center justify-center px-6">
+      <form onSubmit={onSubmit} className="bg-paper-card border border-line rounded-md p-8 w-full max-w-sm space-y-4">
+        <p className="eyebrow">Open a file</p>
+        <h1 className="text-2xl font-display font-semibold text-ink -mt-1">Sign up</h1>
+        <div className="flex gap-1 border border-line rounded-sm p-1">
           {['candidate', 'recruiter'].map((r) => (
             <button
               type="button"
               key={r}
               onClick={() => setRole(r)}
-              className={`flex-1 py-2 rounded-lg border ${role === r ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-300 text-slate-700'}`}
+              className={`flex-1 py-1.5 rounded-sm text-sm font-medium transition-colors ${
+                role === r ? 'bg-ink text-paper-card' : 'text-ink-soft hover:text-ink'
+              }`}
             >
               {r === 'candidate' ? 'Candidate' : 'Recruiter'}
             </button>
           ))}
         </div>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-stamp-dark text-sm">{error}</p>}
         <input
           required
           placeholder="Full name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+          className="w-full border border-line rounded-sm px-3 py-2 bg-white"
         />
         {role === 'recruiter' && (
           <input
@@ -54,7 +57,7 @@ export default function SignupPage() {
             placeholder="Company"
             value={form.company}
             onChange={(e) => setForm({ ...form, company: e.target.value })}
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
+            className="w-full border border-line rounded-sm px-3 py-2 bg-white"
           />
         )}
         <input
@@ -63,7 +66,7 @@ export default function SignupPage() {
           placeholder="Email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+          className="w-full border border-line rounded-sm px-3 py-2 bg-white"
         />
         <input
           type="password"
@@ -71,13 +74,16 @@ export default function SignupPage() {
           placeholder="Password"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+          className="w-full border border-line rounded-sm px-3 py-2 bg-white"
         />
-        <button disabled={loading} className="w-full bg-indigo-600 text-white rounded-lg py-2 font-medium disabled:opacity-50">
-          {loading ? 'Creating account...' : 'Sign up'}
+        <button
+          disabled={loading}
+          className="stamp-press w-full font-display font-semibold bg-stamp text-white rounded-sm py-2 disabled:opacity-50 hover:bg-stamp-dark transition-colors"
+        >
+          {loading ? 'Creating account…' : 'Sign up'}
         </button>
-        <p className="text-sm text-slate-500">
-          Already have an account? <Link to="/login" className="text-indigo-600">Log in</Link>
+        <p className="text-sm text-ink-soft">
+          Already have an account? <Link to="/login" className="text-stamp-dark font-medium">Log in</Link>
         </p>
       </form>
     </div>

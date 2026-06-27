@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import Layout from '../../components/Layout';
+import StampBadge from '../../components/StampBadge';
 
 const STORAGE_KEY = (appId) => `agentrecruit_chat_${appId}`;
 
@@ -122,26 +123,41 @@ function AgentChatPanel({ applicationId }) {
   }
 
   return (
-    <div className="flex flex-col h-[600px] bg-white rounded-xl shadow-sm">
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+    <div className="flex flex-col h-[600px] bg-paper-card border border-line rounded-md">
+      <div className="eyebrow border-b border-line px-4 py-2.5">Transcript — live</div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && (
+          <p className="eyebrow text-ink-soft/70">No questions asked yet. Try "What's their strongest project?"</p>
+        )}
         {messages.map((m, i) => {
           const displayText = m.role === 'agent' ? cleanAgentText(m.text) : m.text;
+          const isRecruiter = m.role === 'recruiter';
           return (
-            <div key={i} className={`max-w-[80%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${m.role === 'recruiter' ? 'bg-indigo-600 text-white ml-auto' : 'bg-slate-100 text-slate-800'}`}>
-              {displayText || (streaming && i === messages.length - 1 ? <span className="animate-pulse">●●●</span> : '')}
+            <div key={i} className={`max-w-[85%] ${isRecruiter ? 'ml-auto' : ''}`}>
+              <p className={`eyebrow mb-1 ${isRecruiter ? 'text-right' : ''}`}>{isRecruiter ? 'You' : 'Agent'}</p>
+              <div
+                className={`rounded-sm px-3 py-2 text-sm whitespace-pre-wrap ${
+                  isRecruiter ? 'bg-ink text-paper-card' : 'bg-paper border border-line text-ink'
+                }`}
+              >
+                {displayText || (streaming && i === messages.length - 1 ? <span className="animate-pulse font-mono">···</span> : '')}
+              </div>
             </div>
           );
         })}
         <div ref={bottomRef} />
       </div>
-      <form onSubmit={sendMessage} className="border-t border-slate-200 p-3 flex gap-2">
+      <form onSubmit={sendMessage} className="border-t border-line p-3 flex gap-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask the candidate's agent a question..."
-          className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm"
+          placeholder="Ask the candidate's agent a question…"
+          className="flex-1 border border-line rounded-sm px-3 py-2 text-sm bg-white"
         />
-        <button disabled={streaming} className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50 transition-colors">
+        <button
+          disabled={streaming}
+          className="stamp-press font-display text-sm font-semibold bg-stamp text-white rounded-sm px-4 py-2 disabled:opacity-50 hover:bg-stamp-dark transition-colors"
+        >
           Send
         </button>
       </form>
@@ -170,36 +186,37 @@ function DecisionPanel({ applicationId, candidateName, decided, decidedStatus })
   const isDecided = decided || decisionMutation.isSuccess;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5 space-y-4">
+    <div className="bg-paper-card border border-line rounded-md p-5 space-y-4">
       <div>
-        <h2 className="font-semibold text-slate-900">{candidateName}</h2>
+        <p className="eyebrow mb-1">Subject</p>
+        <h2 className="font-display font-semibold text-ink text-lg">{candidateName}</h2>
       </div>
-      {confirmation && <p className="text-sm text-green-600">{confirmation}</p>}
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <div className="space-y-2">
+      {confirmation && <p className="text-sm text-seal font-medium">{confirmation}</p>}
+      {error && <p className="text-sm text-stamp-dark">{error}</p>}
+      <div className="space-y-2 pt-1">
         <button
           disabled={isDecided}
           onClick={() => decisionMutation.mutate('interview')}
-          className="w-full bg-green-600 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
+          className="stamp-press w-full border-[1.5px] border-seal text-seal rounded-sm py-2 text-sm font-display font-semibold disabled:opacity-40 hover:bg-seal-soft transition-colors"
         >
           Move to Interview
         </button>
         <button
           disabled={isDecided}
           onClick={() => decisionMutation.mutate('hold')}
-          className="w-full bg-yellow-500 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
+          className="stamp-press w-full border-[1.5px] border-ink-soft text-ink-soft rounded-sm py-2 text-sm font-display font-semibold disabled:opacity-40 hover:bg-ink/5 transition-colors"
         >
           Hold
         </button>
         <button
           disabled={isDecided}
           onClick={() => decisionMutation.mutate('declined')}
-          className="w-full bg-slate-400 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
+          className="stamp-press w-full border-[1.5px] border-stamp text-stamp-dark rounded-sm py-2 text-sm font-display font-semibold disabled:opacity-40 hover:bg-stamp-soft transition-colors"
         >
           Not Moving Forward
         </button>
       </div>
-      {isDecided && !confirmation && <p className="text-sm text-slate-500">Decision: {decidedStatus}</p>}
+      {isDecided && !confirmation && <StampBadge tone="muted">Decided — {decidedStatus}</StampBadge>}
     </div>
   );
 }
@@ -216,8 +233,9 @@ export default function ApplicationDetailPage() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-semibold text-slate-900 mb-6">
-        {current ? `${current.candidate.name} — ${current.job.title}` : 'Application'}
+      <p className="eyebrow mb-1">{current ? current.job.title : 'Application'}</p>
+      <h1 className="text-3xl font-display font-semibold text-ink mb-8">
+        {current ? current.candidate.name : 'Loading…'}
       </h1>
       <div className="grid grid-cols-5 gap-6">
         <div className="col-span-3">
