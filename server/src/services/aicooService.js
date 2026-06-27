@@ -40,10 +40,10 @@ export function revokeShareLink(apiKey, linkId) {
   return aicooRequest(apiKey, `/api/v1/share/${linkId}`, { method: 'DELETE' });
 }
 
-export function sendMessageToUser(apiKey, recipientIdentity, message) {
+export function sendMessageToUser(apiKey, recipientId, message) {
   return aicooRequest(apiKey, '/api/v1/tools', {
     method: 'POST',
-    body: { tool: 'send_message_to_human', to: recipientIdentity, message },
+    body: { tool: 'send_message_to_human', params: { recipientId, message } },
   });
 }
 
