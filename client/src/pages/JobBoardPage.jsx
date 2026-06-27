@@ -37,6 +37,7 @@ function ApplyButton({ jobId }) {
     return (
       <div className="text-right">
         <StampBadge tone="seal">Agent active</StampBadge>
+        {toast && <p className="text-xs text-ink-soft mt-1.5">{toast}</p>}
       </div>
     );
   }

@@ -96,10 +96,17 @@ router.post('/applications/:id/chat', authRequired('recruiter'), async (req, res
       return res.status(410).json({ error: { message: 'This link has expired', code: 'LINK_REVOKED' } });
     }
 
-    const candidate = db.prepare('SELECT aicoo_api_key FROM users WHERE id = ?').get(row.candidate_id);
+    const candidate = db.prepare('SELECT aicoo_api_key, name FROM users WHERE id = ?').get(row.candidate_id);
     const candidateApiKey = decrypt(candidate.aicoo_api_key);
 
-    const upstream = await chatWithAgent(candidateApiKey, message, conversationId);
+    // This Aicoo account is shared across all simulated candidates (see engineering_spec.md's
+    // folder-namespacing shortcut), and its /chat endpoint keeps one persistent conversation
+    // thread rather than isolating by conversationId. Without this anchor, the agent answers
+    // from whichever candidate's profile it last discussed in this thread, not necessarily
+    // the one this recruiter is actually viewing. Re-anchoring on every message is required.
+    const scopedMessage = `[This conversation concerns exactly one candidate: "${candidate.name}". Disregard any other candidate, folder path, or file reference discussed earlier in this thread. Search your notes fresh for a profile belonging to exactly the person named "${candidate.name}" and answer only from that candidate's own profile/experience files.]\n\nRecruiter question: ${message}`;
+
+    const upstream = await chatWithAgent(candidateApiKey, scopedMessage, conversationId);
 
     db.prepare(
       `INSERT INTO agent_events (id, application_id, event_type, event_summary) VALUES (?, ?, 'question_asked', ?)`
