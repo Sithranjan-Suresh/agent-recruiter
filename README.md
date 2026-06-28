@@ -63,6 +63,10 @@ npm test               # unit tests for match scoring, markdown formatting, and 
 
 ## Deployment
 
-- Backend: Railway/Render (Node service, SQLite on disk, set `AICOO_API_KEY`, `JWT_SECRET`, `ENCRYPTION_KEY`, `DB_PATH`)
+- Backend: Railway/Render (Node service; set `AICOO_API_KEY`, `JWT_SECRET`, `ENCRYPTION_KEY`)
 - Frontend: Vercel/Netlify (set `VITE_API_URL` to the deployed backend URL)
-- Run `npm run seed` against the deployed backend once, so demo accounts exist on the live URL.
+- No persistent disk is required: the server auto-seeds demo data on startup whenever
+  the `users` table is empty (see `src/index.js`), so a free-tier instance that resets
+  its filesystem on every deploy/restart self-heals back into a working demo state
+  with no manual step. If you do attach persistent storage, set `DB_PATH` to a path on
+  that volume and the seed will simply be skipped once data already exists there.

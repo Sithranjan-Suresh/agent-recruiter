@@ -23,7 +23,7 @@ async function upsertUser({ email, password, role, name, company }) {
   return db.prepare('SELECT * FROM users WHERE id = ?').get(id);
 }
 
-async function main() {
+export async function seedDemoData() {
   console.log('Seeding demo data...');
 
   const candidate = await upsertUser({
@@ -145,10 +145,14 @@ async function main() {
   }
 
   console.log('Seed complete. Demo accounts: candidate@demo.com / recruiter@demo.com (password: demo123)');
-  process.exit(0);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+const isMain = process.argv[1] && process.argv[1].endsWith('seed.js');
+if (isMain) {
+  seedDemoData()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
+}
