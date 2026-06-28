@@ -28,7 +28,7 @@ export default function Layout({ children }) {
           <Link to="/jobs" className="font-typewriter text-lg text-ink pb-2 shrink-0">
             AgentRecruit<span className="text-stamp">.</span>
           </Link>
-          <nav className="flex items-end gap-1 overflow-x-auto">
+          <nav className="flex items-end gap-1 overflow-x-auto overflow-y-hidden">
             <Tab to="/jobs">Jobs</Tab>
             {user?.role === 'candidate' && (
               <>
