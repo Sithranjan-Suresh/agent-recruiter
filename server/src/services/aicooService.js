@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const BASE_URL = process.env.AICOO_BASE_URL || 'https://api.aicoo.dev';
+const BASE_URL = process.env.AICOO_BASE_URL || 'https://www.aicoo.io';
 
 async function aicooRequest(apiKey, path, { method = 'GET', body, stream = false } = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
