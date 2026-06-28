@@ -8,3 +8,10 @@ dist/
 build/
 .DS_Store
 npm-debug.log*
+
+# Internal planning docs — kept locally, not published to GitHub
+DEMO_SCRIPT.md
+DEMO_WALKTHROUGH.md
+full_context.md
+product_spec.md
+task_breakdown.md
