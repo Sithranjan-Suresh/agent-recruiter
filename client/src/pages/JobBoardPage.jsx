@@ -74,11 +74,11 @@ export default function JobBoardPage() {
       <p className="eyebrow mb-1">Open requisitions</p>
       <h1 className="text-3xl font-display font-semibold text-ink mb-8">Roles taking agent introductions</h1>
       {isLoading && <CardSkeleton />}
-      <div className="grid gap-4">
-        {jobs?.map((job) => (
+      <div className="grid gap-6">
+        {jobs?.map((job, i) => (
           <div
             key={job.id}
-            className="bg-paper-card border border-line rounded-md p-5 flex justify-between items-start gap-6 transition-shadow hover:shadow-[2px_3px_0_var(--color-line)]"
+            className={`case-card pin ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} p-5 flex justify-between items-start gap-6 transition-transform hover:rotate-0`}
           >
             <div>
               <p className="eyebrow mb-1">File — {job.recruiter.company}</p>

@@ -26,7 +26,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
-      <form onSubmit={onSubmit} className="bg-paper-card border border-line rounded-md p-8 w-full max-w-sm space-y-4">
+      <form onSubmit={onSubmit} className="case-card pin p-8 w-full max-w-sm space-y-4">
         <p className="eyebrow">Open a file</p>
         <h1 className="text-2xl font-display font-semibold text-ink -mt-1">Sign up</h1>
         <div className="flex gap-1 border border-line rounded-sm p-1">

@@ -32,7 +32,7 @@ export default function JobPostPage() {
     <Layout>
       <p className="eyebrow mb-1">New requisition</p>
       <h1 className="text-3xl font-display font-semibold text-ink mb-8">Post a job</h1>
-      <form onSubmit={onSubmit} className="space-y-4 bg-paper-card border border-line rounded-md p-6">
+      <form onSubmit={onSubmit} className="case-card pin space-y-4 p-6">
         {error && <p className="text-stamp-dark text-sm">{error}</p>}
         <input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={fieldClass} />
         <input placeholder="Team" value={form.team} onChange={(e) => setForm({ ...form, team: e.target.value })} className={fieldClass} />

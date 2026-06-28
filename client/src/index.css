@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #efece3;
-  --color-paper-card: #fbfaf6;
-  --color-ink: #1c2129;
-  --color-ink-soft: #5b6270;
-  --color-line: #d7d2c3;
-  --color-stamp: #c2410c;
-  --color-stamp-dark: #9a330a;
+  --color-paper: #e8dfc8;
+  --color-paper-card: #f7f1e1;
+  --color-ink: #211d18;
+  --color-ink-soft: #6b6052;
+  --color-line: #c9b98f;
+  --color-stamp: #a8311f;
+  --color-stamp-dark: #7c2316;
   --color-seal: #2f6b4f;
-  --color-seal-soft: #e3ede7;
-  --color-stamp-soft: #f7e6dc;
+  --color-seal-soft: #dce8dd;
+  --color-stamp-soft: #f0dcd2;
 
   --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-typewriter: "Special Elite", "Courier New", monospace;
   --font-body: "Source Sans 3", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
@@ -28,7 +29,7 @@
     color: var(--color-ink);
     background: var(--color-paper);
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(28, 33, 41, 0.04) 1px, transparent 0);
+      radial-gradient(circle at 1px 1px, rgba(33, 29, 24, 0.07) 1px, transparent 0);
     background-size: 22px 22px;
   }
 
@@ -57,11 +58,45 @@
     color: var(--color-ink-soft);
   }
 
+  .font-typewriter {
+    font-family: var(--font-typewriter);
+    letter-spacing: 0.01em;
+  }
+
   .stamp-press {
     transition: transform 120ms ease, box-shadow 120ms ease;
   }
   .stamp-press:active:not(:disabled) {
     transform: scale(0.96) rotate(-0.5deg);
+  }
+
+  /* Pinned case-file card: a manila index card with a pushpin in the
+     corner. The pin is the signature element of the redesign — it
+     appears on every card across the app so the whole product reads
+     as one investigation board, not a generic dashboard. */
+  .case-card {
+    position: relative;
+    background: var(--color-paper-card);
+    border: 1px solid var(--color-line);
+    border-radius: 3px;
+    box-shadow: 1px 2px 0 var(--color-line), 2px 6px 14px rgba(33, 29, 24, 0.08);
+  }
+
+  .pin::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 20px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #e2867a 0%, var(--color-stamp) 55%, var(--color-stamp-dark) 100%);
+    box-shadow: 0 2px 3px rgba(33, 29, 24, 0.45);
+    z-index: 2;
+  }
+
+  .pin-seal::before {
+    background: radial-gradient(circle at 32% 28%, #87bf9d 0%, var(--color-seal) 55%, #1f4a36 100%);
   }
 
   @media (prefers-reduced-motion: reduce) {

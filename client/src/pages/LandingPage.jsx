@@ -20,6 +20,40 @@ const STEPS = [
   },
 ];
 
+function Corkboard() {
+  const cards = [
+    { label: 'Candidate', sub: 'Sarah Chen', detail: 'Senior ML Engineer', rotate: '-rotate-2', pin: 'pin' },
+    { label: 'Agent', sub: 'Acts on her behalf', detail: 'Answers, cites sources, never guesses', rotate: 'rotate-1', pin: 'pin pin-seal' },
+    { label: 'Recruiter', sub: 'Stripe', detail: 'Engineering recruiting', rotate: '-rotate-1', pin: 'pin' },
+  ];
+  return (
+    <div className="relative max-w-3xl mx-auto mt-10 mb-4 px-2">
+      <div
+        className="absolute top-1/2 hidden md:block -translate-y-1/2"
+        style={{ left: '12%', right: '12%', height: 0, borderTop: '2px dashed var(--color-stamp)', opacity: 0.4, zIndex: 0 }}
+        aria-hidden="true"
+      />
+      <div
+        className="absolute left-1/2 top-0 bottom-0 md:hidden -translate-x-1/2"
+        style={{ width: 0, height: '100%', borderLeft: '2px dashed var(--color-stamp)', opacity: 0.4, zIndex: 0 }}
+        aria-hidden="true"
+      />
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4">
+        {cards.map((c) => (
+          <div
+            key={c.label}
+            className={`case-card ${c.pin} ${c.rotate} px-5 py-4 w-full max-w-[210px] text-center`}
+          >
+            <p className="eyebrow text-stamp-dark mb-1">{c.label}</p>
+            <p className="font-display font-semibold text-ink text-sm">{c.sub}</p>
+            <p className="text-xs text-ink-soft mt-1">{c.detail}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const { user } = useAuth();
 
@@ -27,7 +61,7 @@ export default function LandingPage() {
     <div className="min-h-screen">
       <header className="px-6 pt-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="font-display text-lg font-semibold text-ink">
+          <span className="font-typewriter text-lg text-ink">
             AgentRecruit<span className="text-stamp">.</span>
           </span>
           <Link to={user ? (user.role === 'candidate' ? '/candidate/dashboard' : '/recruiter/inbox') : '/login'} className="eyebrow text-ink-soft hover:text-ink transition-colors">
@@ -37,13 +71,18 @@ export default function LandingPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-6">
-        <section className="pt-16 pb-12 text-center">
+        <section className="pt-12 pb-8 text-center">
           <p className="eyebrow mb-3">Case file 001 — the recruiting problem</p>
-          <h1 className="text-4xl md:text-5xl font-display font-semibold text-ink leading-tight max-w-3xl mx-auto">
+          <h1 className="font-typewriter text-3xl md:text-4xl text-ink leading-tight max-w-3xl mx-auto">
             The average job posting gets 250 applications.
             <br />
             Recruiters spend 6 seconds on each one.
           </h1>
+        </section>
+
+        <Corkboard />
+
+        <section className="pt-4 pb-12 text-center">
           <p className="text-ink-soft max-w-xl mx-auto mt-5">
             AgentRecruit gives every candidate a persistent AI agent that carries their case file into every recruiter
             conversation — so nobody repeats themselves, and nobody gets six seconds.
@@ -70,9 +109,9 @@ export default function LandingPage() {
         <section className="pb-16">
           <p className="eyebrow mb-1 text-center">How the case moves</p>
           <h2 className="text-2xl font-display font-semibold text-ink text-center mb-10">From profile to decision, no resume required</h2>
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid md:grid-cols-4 gap-6 pt-3">
             {STEPS.map((step, i) => (
-              <div key={step.label} className="bg-paper-card border border-line rounded-md p-5">
+              <div key={step.label} className={`case-card pin ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} p-5`}>
                 <p className="eyebrow mb-2">Step {i + 1}</p>
                 <h3 className="font-display font-semibold text-ink mb-2">{step.label}</h3>
                 <p className="text-sm text-ink-soft">{step.body}</p>
@@ -82,7 +121,7 @@ export default function LandingPage() {
         </section>
 
         <section className="pb-16">
-          <div className="bg-paper-card border border-line rounded-md p-6">
+          <div className="case-card pin-seal pin p-6">
             <p className="eyebrow mb-2">Architecture note — read before you ask</p>
             <h3 className="font-display font-semibold text-ink mb-2">Why every demo account shares one Aicoo key</h3>
             <p className="text-sm text-ink-soft max-w-2xl">

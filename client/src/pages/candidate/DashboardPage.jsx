@@ -83,7 +83,7 @@ function CoachPanel() {
   }
 
   return (
-    <div className="bg-paper-card border border-line rounded-md mt-8">
+    <div className="case-card pin pin-seal mt-10">
       <div className="eyebrow border-b border-line px-4 py-2.5">Ask your own agent</div>
       <div className="p-4 space-y-3 max-h-[320px] overflow-y-auto">
         {messages.length === 0 && (
@@ -168,9 +168,9 @@ export default function DashboardPage() {
         </p>
       )}
       {isLoading && <CardSkeleton />}
-      <div className="space-y-4">
-        {applications?.map((app) => (
-          <div key={app.id} className="bg-paper-card border border-line rounded-md p-5 transition-shadow hover:shadow-[2px_3px_0_var(--color-line)]">
+      <div className="space-y-6">
+        {applications?.map((app, i) => (
+          <div key={app.id} className={`case-card pin ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} p-5`}>
             <div className="flex justify-between items-start">
               <div>
                 <p className="eyebrow mb-1">{app.job.company}</p>

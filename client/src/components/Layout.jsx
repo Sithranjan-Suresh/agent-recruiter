@@ -25,7 +25,7 @@ export default function Layout({ children }) {
     <div className="min-h-screen">
       <header className="px-4 sm:px-6 pt-4">
         <div className="max-w-5xl mx-auto flex items-end justify-between gap-3">
-          <Link to="/jobs" className="font-display text-lg font-semibold text-ink pb-2 shrink-0">
+          <Link to="/jobs" className="font-typewriter text-lg text-ink pb-2 shrink-0">
             AgentRecruit<span className="text-stamp">.</span>
           </Link>
           <nav className="flex items-end gap-1 overflow-x-auto">

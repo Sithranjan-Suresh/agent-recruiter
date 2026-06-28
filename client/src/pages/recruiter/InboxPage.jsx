@@ -16,12 +16,12 @@ export default function InboxPage() {
       <p className="eyebrow mb-1">Incoming — agent introductions</p>
       <h1 className="text-3xl font-display font-semibold text-ink mb-8">Inbox</h1>
       {isLoading && <CardSkeleton />}
-      <div className="space-y-3">
-        {inbox?.map((item) => (
+      <div className="space-y-5">
+        {inbox?.map((item, i) => (
           <Link
             key={item.applicationId}
             to={`/recruiter/applications/${item.applicationId}`}
-            className="block bg-paper-card border border-line rounded-md p-4 hover:shadow-[2px_3px_0_var(--color-line)] transition-shadow"
+            className={`case-card pin ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} block p-4 transition-transform hover:rotate-0`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">

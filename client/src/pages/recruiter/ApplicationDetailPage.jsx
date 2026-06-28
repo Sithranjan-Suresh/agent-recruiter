@@ -142,7 +142,7 @@ function AgentChatPanel({ applicationId }) {
   }
 
   return (
-    <div className="flex flex-col h-[600px] bg-paper-card border border-line rounded-md">
+    <div className="case-card pin -rotate-1 flex flex-col h-[600px]">
       <div className="eyebrow border-b border-line px-4 py-2.5">Transcript — live</div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
@@ -220,7 +220,7 @@ function DecisionPanel({ applicationId, candidateName, decided, decidedStatus })
   const isDecided = decided || decisionMutation.isSuccess;
 
   return (
-    <div className="bg-paper-card border border-line rounded-md p-5 space-y-4">
+    <div className="case-card pin pin-seal rotate-1 p-5 space-y-4">
       <div>
         <p className="eyebrow mb-1">Subject</p>
         <h2 className="font-display font-semibold text-ink text-lg">{candidateName}</h2>

@@ -104,7 +104,7 @@ export default function ProfilePage() {
       {!loaded ? (
         <p className="text-ink-soft">Loading…</p>
       ) : (
-      <form onSubmit={onSubmit} className="space-y-6 bg-paper-card border border-line rounded-md p-6">
+      <form onSubmit={onSubmit} className="case-card pin space-y-6 p-6">
         {errors.submit && <p className="text-stamp-dark text-sm">{errors.submit}</p>}
 
         <div>
