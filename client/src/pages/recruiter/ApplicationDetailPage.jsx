@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import Layout from '../../components/Layout';
@@ -266,13 +266,25 @@ function DecisionPanel({ applicationId, candidateName, decided, decidedStatus })
 
 export default function ApplicationDetailPage() {
   const { id } = useParams();
-  const { data: inbox } = useQuery({
+  const { data: inbox, isLoading } = useQuery({
     queryKey: ['recruiter-inbox'],
     queryFn: () => api.get('/recruiter/inbox').then((r) => r.data),
   });
 
   const current = inbox?.find((a) => a.applicationId === id);
   const decidedStatuses = ['interview', 'hold', 'declined'];
+
+  if (!isLoading && inbox && !current) {
+    return (
+      <Layout>
+        <p className="eyebrow mb-1">Application</p>
+        <h1 className="text-3xl font-display font-semibold text-ink mb-4">Not found</h1>
+        <p className="text-ink-soft">
+          This application doesn't exist, or isn't one of yours. <Link to="/recruiter/inbox" className="text-stamp-dark font-medium">Back to inbox →</Link>
+        </p>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
